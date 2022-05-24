@@ -15,7 +15,7 @@ class PortScanner:
     __ping_MESSAGE = 'ping'
 
     # We will use semaphore to make sure that only one Thread can append to our List
-    _tcp_semaphore = [Semaphore(1), Semaphore(1), Semaphore(1)] 
+    _tcp_semaphore = Semaphore(1) 
     _udp_semaphore = Semaphore(1)
 
     def __init__(self, victim, number_of_ports):
@@ -37,24 +37,20 @@ class PortScanner:
         sock = socket.socket() # The default of Socket object is TCP and IPV4
         try:
             sock.connect((self.victim, port))
-            #self._tcp_semaphore[0].acquire() # This is block any thread to modify the list like sem_wait()
+            self._tcp_semaphore.acquire() # This is block any thread to modify the list like sem_wait()
             self._open_tcp_ports.append(port) # if code reach to this line it means that the port is open
-            #self._tcp_semaphore[0].release() # This release the resource
-            print(f"[+] {port} Open")
+            self._tcp_semaphore.release() # This release the resource
             try:
                 # Try To Get Banner if exist
-                print(f"[+] Get Header fot {port}")
-                banner = sock.recv(1024)
+                banner = sock.recv(1024) 
                 # if There is a panner store it 
-                #self._tcp_semaphore[1].acquire()
+                self._tcp_semaphore.acquire() 
                 self._banners.append(banner.decode().strip('\n').strip('\r')) 
-                #self._tcp_semaphore[1].release()
+                self._tcp_semaphore.release()
             except:
                 # If code reach to this line it means that there is not banner for this open port
                 # so we will add dummy data
-                #self._tcp_semaphore[2].acquire()
                 self._banners.append(' ')
-                #self._tcp_semaphore[2].release()
         except:
             # if code reach to this line to mean that port is closed or filtered
             pass
@@ -109,7 +105,7 @@ class PortScanner:
         sock = socket.socket(type=socket.SOCK_DGRAM)
         try:
             sock.sendto(self.__ping_MESSAGE.decode('utf_8'), (self.victim, port))
-            
+            sock.settimeout(1)
             data, addr = sock.recvfrom(1024)
         except:
             try:
