@@ -8,6 +8,7 @@ class PortScanner:
     # this list will contain the open tcp ports for victim 
     _open_tcp_ports = []
     _banners = []
+    f = 0
 
     # this list will contain the open udp ports for victim
     __open_udp_ports = []
@@ -20,7 +21,7 @@ class PortScanner:
 
     def __init__(self, victim, number_of_ports):
         self.victim = victim
-        self.number_of_ports = number_of_ports
+        self.number_of_ports = int(number_of_ports)
 
 
     # We will Classify The open Ports to 3 Category
@@ -42,18 +43,24 @@ class PortScanner:
             self._tcp_semaphore.release() # This release the resource
             try:
                 # Try To Get Banner if exist
+                print(f"Try to get banner from port {port}")
                 banner = sock.recv(1024) 
                 # if There is a panner store it 
-                self._tcp_semaphore.acquire() 
+                self._tcp_semaphore.acquire()
+                print(f"There is a banner in Port {port}")                
                 self._banners.append(banner.decode().strip('\n').strip('\r')) 
                 self._tcp_semaphore.release()
             except:
+                pass
                 # If code reach to this line it means that there is not banner for this open port
                 # so we will add dummy data
+                self._tcp_semaphore.acquire()
                 self._banners.append(' ')
+                self._tcp_semaphore.release()
         except:
             # if code reach to this line to mean that port is closed or filtered
             pass
+
 
 
     # This Function open Thread for each Port and scan it
@@ -61,6 +68,10 @@ class PortScanner:
     # @return True if All ports scanned Successfully
     def scan(self, method="TCP"):
         _method = self.__scan_tcp_port
+        self._open_tcp_ports = []
+        self.__open_udp_ports = []
+        self.get_tcp_banners = []
+        self.__udp_service = []
         if (method.upper() == "UDP"):
             _method = self.__scan_udp_port
         else:
@@ -70,17 +81,18 @@ class PortScanner:
         _threads = []
         cnt = 0
         try :
+            
             for i in range(1, self.number_of_ports + 1):
                 _threads.append(Thread(target=_method, args=(i,)))
                 cnt += 1
-        
-            for i in range(cnt):
-                _threads[i].start()
 
-            for i in range(cnt):
-                _threads[i].join()
+            for thread in _threads:
+                thread.start()
+
+            for thread in _threads:
+                thread.join()
+            
             return True
-
         except:
             return False
 
