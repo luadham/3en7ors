@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter import font
 from PortScanner import PortScanner as pscanner
 from VulnerabilityScanner import VulnerabilityScanner as vscanner
+import tkinter as tk
+import tkinter.scrolledtext as st
 
 main_color = "#414141"
 
@@ -17,7 +19,34 @@ udp_services = []
 open_tcp_vul_ports = []
 open_tcp_vul_banners = []
 
+bg = PhotoImage(file="res/img.png")
+new_back = Label(root,image=bg)
+new_back.place(x=0,y=0,relwidth=1,relheight=1)
 
+text_area = st.ScrolledText(root,
+                            width = 50,
+                            height = 19,
+                            font = ("Times New Roman",
+                                    15))
+text_area.grid(column = 0, pady = 80, padx = 80)
+
+text_area.insert(tk.INSERT,
+                 """\
+1st
+                 """,'x')
+
+
+text_area.insert(tk.INSERT,
+                 """\
+                 2nd
+                 
+                 """,'y')
+text_area.tag_config('x', foreground='red')
+text_area.tag_config('y', foreground='gold')
+
+
+
+text_area.configure(state ='disabled')
 # This Function Take victim ip and number if ports that we want to scan
 # and then fill open_tcp_ports, open_udp_ports, udp_services
 # You Should Call it when user click to Scan Button
@@ -53,7 +82,7 @@ def scan_victim_vul(victim, number_of_ports):
 
 # This is Function Will invoke when user click on scan button
 # TODO: WE MUST CALL THIS FUNCTION IN ANOTHER THREAD
-# Print statement just for illustration YOU Should Delete it 
+# Print statement just for illustration YOU Should Delete it
 def scan_victim():
     victim = target_input.get()
     number_of_ports = number_of_ports_input.get()
@@ -66,13 +95,13 @@ def scan_victim():
         for i in open_udp_ports:
             print(f'{i} -> {udp_services[cnt]}')
             cnt += 1
-        
+
         print("==[ Vul Ports ]==")
         cnt = 0
         for i in open_tcp_vul_ports:
             print(f"{i} -> {open_tcp_vul_banners[cnt]}")
             cnt += 1
-        
+
     else:
         assert "Check Victim IP of Number of Ports"
 
@@ -93,13 +122,45 @@ number_of_ports_input.place(x=250, y=13)
 scan_button = Button(root, text="Scan Port", command=scan_victim)
 scan_button.place(x=400, y=10)
 
-vul_text_area = Text(root)
-vul_text_area.place(x=20, y=60)
+#vul_text_area = Text(root)
+#vul_text_area.place(x=20, y=60)
+# listbox = Listbox(root)
+#
+# listbox.insert(1,"Bread")
+# listbox.insert(2, "Milk")
+# listbox.insert(3, "Meat")
+# listbox.insert(4, "Cheese")
+# listbox.insert(5, "Vegetables")
+#
+# listbox.place(x=20, y=60)
+#listbox.size(x=50, y=80)
+
+#T = Text(root, height = 5, width = 52)
+
+# Create label
+
+#l.config(font =("Courier", 14))
+
+# Fact = """A man can be arrested """
+# #l.size(x=50, y=80)
+# l.pack()
+
+
+# tk.Label(root,
+# text = "ScrolledText Widget Example",
+#          font = ("Times New Roman", 15),
+#          background = 'green',
+#          foreground = "white").grid(column = 0,
+#                                     row = 0)
+
+
 
 root['bg'] = main_color
 # Title of Window
 root.title("3en7ors")
 # Size of Window
 root.geometry("690x500")
+root.iconbitmap('res/eye.ico')
+root.resizable(False, False)
 # INIT Window
 root.mainloop()
