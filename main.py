@@ -84,7 +84,6 @@ def scan_victim_vul(victim, number_of_ports):
     return True
 
 # This is Function Will invoke when user click on scan button
-# TODO: WE MUST CALL THIS FUNCTION IN ANOTHER THREAD
 # Print statement just for illustration YOU Should Delete it
 
 
@@ -97,6 +96,7 @@ def scan_victim():
     print("I will scan")
     scan_button.configure(state=tkinter.DISABLED)
     if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
+        
         text_area.insert(
             tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
         text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
