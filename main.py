@@ -13,7 +13,7 @@ import time
 main_color = "#414141"
 
 # This is the root Window
-root = Tk()
+root = customtkinter.CTk()
 # create Label
 
 open_tcp_ports = []  # first
@@ -24,7 +24,7 @@ open_tcp_vul_ports = []  # kol port wel banner bet3to
 open_tcp_vul_banners = []
 
 bg = PhotoImage(file="res/img.png")
-new_back = Label(root, image=bg)
+new_back = customtkinter.CTkLabel(root, image=bg)
 new_back.place(x=0, y=0, relwidth=1, relheight=1)
 
 text_area = st.ScrolledText(root,
@@ -131,28 +131,28 @@ def scan_victim2():
     else:
         assert "Check Victim IP of Number of Ports"
 
-    print(len(open_tcp_ports))
-
 
 def runDiffThread():
     t = threading.Thread(target=scan_victim2)
     t.start()
 
 
-target_label = Label(root, text="Target", bg=main_color, fg="white")
+target_label = customtkinter.CTkLabel(
+    root, text="Target", bg=main_color, fg="white")
 target_label.place(x=10, y=13)
 
 # TODO: You Must Make Sure that user enter valid IP Address
-target_input = Entry(root)
+target_input = customtkinter.CTkEntry(root)
 target_input.insert(0, '192.168.1.1')
-target_input.place(x=80, y=13)
+target_input.place(x=120, y=13)
 
 # TODO: You Must Check that user enter ports number in range between 1 to 2^16
-number_of_ports_input = Entry(root)
+number_of_ports_input = customtkinter.CTkEntry(root)
 number_of_ports_input.insert(0, '# of Ports')
 number_of_ports_input.place(x=250, y=13)
 
-scan_button = Button(root, text="Scan Port", command=runDiffThread)
+scan_button = customtkinter.CTkButton(
+    root, text="Scan Port", command=runDiffThread)
 scan_button.place(x=400, y=10)
 
 #vul_text_area = Text(root)
