@@ -1,6 +1,8 @@
 from _tkinter import *
+from cProfile import label
 from tkinter import *
 from tkinter import font
+from turtle import bgcolor, color
 from PortScanner import PortScanner as pscanner
 from VulnerabilityScanner import VulnerabilityScanner as vscanner
 import tkinter as tk
@@ -26,20 +28,19 @@ udp_services = []
 ####
 
 # 3
-#### red
+# red
 open_tcp_vul_ports = []  # kol port wel banner bet3to
 open_tcp_vul_banners = []
-### red
+# red
 
-bg = PhotoImage(file="res/img.png")
-new_back = customtkinter.CTkLabel(root, image=bg)
+new_back = customtkinter.CTkLabel(root)
 new_back.place(x=0, y=0, relwidth=1, relheight=1)
 
 # Text Area
 text_area = st.ScrolledText(root,
                             width=50,
                             height=19, font=("Times New Roman", 15))
-text_area.grid(column=0, pady=80, padx=80)
+text_area.grid(column=0, pady=100, padx=110)
 
 text_area.tag_config('x', foreground='red')
 text_area.tag_config('y', foreground='gold')
@@ -50,6 +51,8 @@ text_area.insert(tk.INSERT, "Status\t\n", 'black')
 # This Function Take victim ip and number if ports that we want to scan
 # and then fill open_tcp_ports, open_udp_ports, udp_services
 # You Should Call it when user click to Scan Button
+
+
 def scan_victim_ports(victim, number_of_ports):
     port_scanner = pscanner(victim=victim, number_of_ports=number_of_ports)
 
@@ -90,10 +93,12 @@ def scan_victim():
     number_of_ports = number_of_ports_input.get()
     global text_area
     print("I will scan")
+    #scan_button['state'] = 'disabled'
     if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
-            for i in open_tcp_ports:
-                text_area.insert(tk.INSERT, f"{i}\n", 'black')
-            text_area.configure(state='disabled')
+
+        for i in open_tcp_ports:
+            text_area.insert(tk.INSERT, f"{i}\n", 'black')
+        text_area.configure(state='disabled')
     else:
         assert "Check Victim IP of Number of Ports"
 
@@ -101,8 +106,6 @@ def scan_victim():
 def run_diff_thread():
     t = threading.Thread(target=scan_victim)
     t.start()
-
-
 
 
 target_label = customtkinter.CTkLabel(
@@ -118,6 +121,8 @@ target_input.place(x=120, y=13)
 number_of_ports_input = customtkinter.CTkEntry(root)
 number_of_ports_input.insert(0, '# of Ports')
 number_of_ports_input.place(x=250, y=13)
+labelTab = Label(root, bg="white", text="3een7oros Output")
+labelTab.place(x=111, y=75)
 
 scan_button = customtkinter.CTkButton(
     root, text="Scan Port", command=run_diff_thread)
@@ -159,7 +164,7 @@ root['bg'] = main_color
 # Title of Window
 root.title("3en7ors")
 # Size of Window
-root.geometry("690x500")
+root.geometry("690x550")
 root.iconbitmap('res/eye.ico')
 root.resizable(False, False)
 # INIT Window
