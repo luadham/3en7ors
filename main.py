@@ -84,89 +84,94 @@ def scan_victim_vul(victim, number_of_ports):
         return False
     return True
 
+anim_time = 0.5
+is_anim = True
+
+def simple_animation():
+    text_area.insert(tk.INSERT, "Scanning\nPlease Wait\n", 'black')
+    root.update()
+    time.sleep(anim_time)
+    text_area.delete('1.0', END)
+    text_area.insert(tk.INSERT, "Scanning.\nPlease Wait\n", 'black')
+    root.update()
+    time.sleep(anim_time)
+    text_area.delete('1.0', END)
+    text_area.insert(tk.INSERT, "Scanning..\nPlease Wait\n", 'black')
+    root.update()
+    time.sleep(anim_time)
+    text_area.delete('1.0', END)
+    text_area.insert(tk.INSERT, "Scanning...\nPlease Wait\n", 'black')
+    root.update()
+    time.sleep(anim_time)
+    text_area.delete('1.0', END)
+
 # This is Function Will invoke when user click on scan button
 # Print statement just for illustration YOU Should Delete it
-
-
 def scan_victim():
     victim = target_input.get()
     number_of_ports = number_of_ports_input.get()
-    global text_area
-    print("I will scan")
-    scan_button.configure(state=tkinter.DISABLED)
-    if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
-        
-        text_area.insert(
-            tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
-        text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
-        idx = 0
-        for port in open_tcp_vul_banners:
-            text_area.insert(
-                tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
-        text_area.insert(tk.INSERT, "==[ Open TCP Ports ]==\n", 'black')
-        text_area.insert(tk.INSERT, "Port\tStatus\n", 'black')
-
-        for port in open_tcp_ports:
-            text_area.insert(tk.INSERT, f"{port}\tOpen\n", 'g')
-
-        text_area.insert(tk.INSERT, "==[ Open UDP Ports ]==\n", 'black')
-        text_area.insert(tk.INSERT, "Port\tService\n", 'black')
-
-        idx = 0
-        for port in open_udp_ports:
-            text_area.insert(
-                tk.INSERT, f"{open_udp_ports[idx]}\t{udp_services[idx]}\n", 'g')
-            idx += 1
-
-        text_area.configure(state='disabled')
-        scan_button.configure(state=tkinter.NORMAL)
-    if(int(number_of_ports) > int(number_of_ports) << 16 or int(number_of_ports) <= 1):
-        print("a")
+    if(int(number_of_ports) > (1 << 16) or int(number_of_ports) < 1):
         messagebox.showerror("Error", "Enter a valid port number")
     else:
         global text_area
-        
+        global is_anim
         print("I will scan")
         scan_button.configure(state=tkinter.DISABLED)
-        if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
-            text_area.insert(
-                tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
-            text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
-            idx = 0
-            if(len(open_tcp_vul_ports) == 0):
-                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
-            for port in open_tcp_vul_banners:
-                text_area.insert(
-                    tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
-            text_area.insert(tk.INSERT, "==[ Open TCP Ports ]==\n", 'black')
-            text_area.insert(tk.INSERT, "Port\tStatus\n", 'black')
-            if(len(open_tcp_ports) == 0):
-                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
-
-
-            for port in open_tcp_ports:
-                text_area.insert(tk.INSERT, f"{port}\tOpen\n", 'g')
-
-            text_area.insert(tk.INSERT, "==[ Open UDP Ports ]==\n", 'black')
-            text_area.insert(tk.INSERT, "Port\tService\n", 'black')
-
-            idx = 0
-            if(len(open_udp_ports) == 0):
-                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
-            for port in open_udp_ports:
-                text_area.insert(
-                    tk.INSERT, f"{open_udp_ports[idx]}\t{udp_services[idx]}\n", 'g')
-                idx += 1
-
+        scan_ports = scan_victim_ports(victim=victim, number_of_ports=number_of_ports)
+        scan_vul = scan_victim_vul(victim=victim, number_of_ports=number_of_ports)
+        is_anim = False
+        if (scan_ports and scan_vul):
+            text_area.delete('1.0', END)
+            display_vul_ports()
+            display_tcp_ports()
+            display_udp_ports()
             text_area.configure(state='disabled')
             scan_button.configure(state=tkinter.NORMAL)
         else:
             assert "Check Victim IP of Number of Ports"
 
+def display_tcp_ports():
+    text_area.insert(tk.INSERT, "==[ Open TCP Ports ]==\n", 'black')
+    text_area.insert(tk.INSERT, "Port\tStatus\n", 'black')
+    if(len(open_tcp_ports) == 0):
+        text_area.insert(tk.INSERT, "There is nothing opened\n", 'g')
+    else:
+        for port in open_tcp_ports:
+            text_area.insert(tk.INSERT, f"{port}\tOpen\n", 'g')
+
+
+def display_udp_ports():
+    text_area.insert(tk.INSERT, "==[ Open UDP Ports ]==\n", 'black')
+    text_area.insert(tk.INSERT, "Port\tService\n", 'black')
+
+    idx = 0
+    if(len(open_udp_ports) == 0):
+        text_area.insert(tk.INSERT, "There is nothing opened\n", 'g')
+    else:
+        for port in open_udp_ports:
+            text_area.insert(
+                tk.INSERT, f"{open_udp_ports[idx]}\t{udp_services[idx]}\n", 'g')
+            idx += 1
+
+
+def display_vul_ports():
+    text_area.insert(
+        tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
+    text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
+    idx = 0
+    if(len(open_tcp_vul_ports) == 0):
+        text_area.insert(tk.INSERT, "There is nothing opened\n", 'g')
+    else:
+        for port in open_tcp_vul_banners:
+            text_area.insert(
+                tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
+
 
 def run_diff_thread():
     t = threading.Thread(target=scan_victim)
     t.start()
+    while is_anim:
+        simple_animation()
 
 
 target_label = customtkinter.CTkLabel(
@@ -178,6 +183,7 @@ target_input = customtkinter.CTkEntry(
     root, text_color="white")
 target_input.insert(0, '192.168.1.1')
 target_input.place(x=120, y=13)
+
 
 number_of_ports_input = customtkinter.CTkEntry(
     root, text_color="white")
