@@ -97,6 +97,7 @@ def scan_victim():
         messagebox.showerror("Error", "Enter a valid port number")
     else:
         global text_area
+        
         print("I will scan")
         scan_button.configure(state=tkinter.DISABLED)
         if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
@@ -104,12 +105,16 @@ def scan_victim():
                 tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
             text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
             idx = 0
-            # Handel if list is empty
+            if(len(open_tcp_vul_ports) == 0):
+                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
             for port in open_tcp_vul_banners:
                 text_area.insert(
                     tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
             text_area.insert(tk.INSERT, "==[ Open TCP Ports ]==\n", 'black')
             text_area.insert(tk.INSERT, "Port\tStatus\n", 'black')
+            if(len(open_tcp_ports) == 0):
+                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
+
 
             for port in open_tcp_ports:
                 text_area.insert(tk.INSERT, f"{port}\tOpen\n", 'g')
@@ -118,6 +123,8 @@ def scan_victim():
             text_area.insert(tk.INSERT, "Port\tService\n", 'black')
 
             idx = 0
+            if(len(open_udp_ports) == 0):
+                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
             for port in open_udp_ports:
                 text_area.insert(
                     tk.INSERT, f"{open_udp_ports[idx]}\t{udp_services[idx]}\n", 'g')
