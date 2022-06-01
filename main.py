@@ -91,6 +91,8 @@ def scan_victim_vul(victim, number_of_ports):
 def scan_victim():
     victim = target_input.get()
     number_of_ports = number_of_ports_input.get()
+    # Check bta3 sayed w marawan
+    # if number of ports in range 1 to 1 << 16
     global text_area
     print("I will scan")
     scan_button.configure(state=tkinter.DISABLED)
@@ -99,6 +101,7 @@ def scan_victim():
             tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
         text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
         idx = 0
+        # Handel if list is empty
         for port in open_tcp_vul_banners:
             text_area.insert(
                 tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
