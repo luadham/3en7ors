@@ -34,7 +34,7 @@ class PortScanner:
         try:
             sock.connect((self.victim, port))
             self._tcp_semaphore.acquire() # This is block any thread to modify the list like sem_wait()
-            #print(f"[+] {port} Open")
+            # print(f"[+] {port} Open")
             self._open_tcp_ports.append(port) # if code reach to this line it means that the port is open
             #print("Adham")
             self._tcp_semaphore.release() # This release the resource

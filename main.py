@@ -5,7 +5,7 @@ from PortScanner import PortScanner as pscanner
 from VulnerabilityScanner import VulnerabilityScanner as vscanner
 import tkinter as tk
 import tkinter.scrolledtext as st
-#import customtkinter
+import customtkinter
 import threading
 import time
 
@@ -16,45 +16,40 @@ main_color = "#414141"
 root = customtkinter.CTk()
 # create Label
 
+# 1
 open_tcp_ports = []  # first
+
+# 2
+####
 open_udp_ports = []  # kol port udp osado el service bet3to
 udp_services = []
+####
 
+# 3
+#### red
 open_tcp_vul_ports = []  # kol port wel banner bet3to
 open_tcp_vul_banners = []
+### red
 
 bg = PhotoImage(file="res/img.png")
 new_back = customtkinter.CTkLabel(root, image=bg)
 new_back.place(x=0, y=0, relwidth=1, relheight=1)
 
+# Text Area
 text_area = st.ScrolledText(root,
                             width=50,
-                            height=19,
-                            font=("Times New Roman",
-                                  15))
+                            height=19, font=("Times New Roman", 15))
 text_area.grid(column=0, pady=80, padx=80)
 
-text_area.insert(tk.INSERT,
-                 """\
-1st
-                 """, 'x')
-
-
-text_area.insert(tk.INSERT,
-                 """\
-                 2nd
-                 
-                 """, 'y')
 text_area.tag_config('x', foreground='red')
 text_area.tag_config('y', foreground='gold')
 
 
-text_area.configure(state='disabled')
+text_area.insert(tk.INSERT, "\t\tPort\t\t", 'black')
+text_area.insert(tk.INSERT, "Status\t\n", 'black')
 # This Function Take victim ip and number if ports that we want to scan
 # and then fill open_tcp_ports, open_udp_ports, udp_services
 # You Should Call it when user click to Scan Button
-
-
 def scan_victim_ports(victim, number_of_ports):
     port_scanner = pscanner(victim=victim, number_of_ports=number_of_ports)
 
@@ -90,51 +85,24 @@ def scan_victim_vul(victim, number_of_ports):
 # Print statement just for illustration YOU Should Delete it
 
 
-def scan_victim2():
+def scan_victim():
     victim = target_input.get()
     number_of_ports = number_of_ports_input.get()
+    global text_area
+    print("I will scan")
     if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
-        if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports
-                              ) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
-            text_area.insert(tk.INSERT,
-                             """\
-                             ==[ Open TCP Ports ]==                 
-                             """,'y')
-        ##print("==[ Open TCP Ports ]==")
-        ########
-
-        for i in open_tcp_ports:
-            print(i)
-        text_area.insert(tk.INSERT,
-                         """\
-                         [ Open UDP Ports ]                 
-                         """,'y')
-        ##print("==[ Open UDP Ports ]==")
-        cnt = 0
-        for i in open_udp_ports:
-            text_area.insert(tk.INSERT,
-                             f'{i} -> {udp_services[cnt]}'
-                             ,'y')
-            ##print(f'{i} -> {udp_services[cnt]}')
-            cnt += 1
-
-        print("==[ Vul Ports ]==")
-        cnt = 0
-        for i in open_tcp_vul_ports:
-            text_area.insert(tk.INSERT,
-                             f'{i} -> {open_tcp_vul_banners[cnt]}'
-                             ,'y')
-            ##print(f"{i} -> {open_tcp_vul_banners[cnt]}")
-            cnt += 1
-            ###################
-
+            for i in open_tcp_ports:
+                text_area.insert(tk.INSERT, f"{i}\n", 'black')
+            text_area.configure(state='disabled')
     else:
         assert "Check Victim IP of Number of Ports"
 
 
-def runDiffThread():
-    t = threading.Thread(target=scan_victim2)
+def run_diff_thread():
+    t = threading.Thread(target=scan_victim)
     t.start()
+
+
 
 
 target_label = customtkinter.CTkLabel(
@@ -152,7 +120,7 @@ number_of_ports_input.insert(0, '# of Ports')
 number_of_ports_input.place(x=250, y=13)
 
 scan_button = customtkinter.CTkButton(
-    root, text="Scan Port", command=runDiffThread)
+    root, text="Scan Port", command=run_diff_thread)
 scan_button.place(x=400, y=10)
 
 #vul_text_area = Text(root)
@@ -195,4 +163,5 @@ root.geometry("690x500")
 root.iconbitmap('res/eye.ico')
 root.resizable(False, False)
 # INIT Window
+
 root.mainloop()
