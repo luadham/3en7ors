@@ -45,10 +45,9 @@ text_area.grid(column=0, pady=100, padx=110)
 
 text_area.tag_config('x', foreground='red')
 text_area.tag_config('y', foreground='gold')
+text_area.tag_config('g', foreground='green')
 
 
-text_area.insert(tk.INSERT, "\t\tPort\t\t", 'black')
-text_area.insert(tk.INSERT, "Status\t\n", 'black')
 # This Function Take victim ip and number if ports that we want to scan
 # and then fill open_tcp_ports, open_udp_ports, udp_services
 # You Should Call it when user click to Scan Button
@@ -96,9 +95,28 @@ def scan_victim():
     print("I will scan")
     scan_button.configure(state=tkinter.DISABLED)
     if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
+        text_area.insert(
+            tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
+        text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
+        idx = 0
+        for port in open_tcp_vul_banners:
+            text_area.insert(
+                tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
+        text_area.insert(tk.INSERT, "==[ Open TCP Ports ]==\n", 'black')
+        text_area.insert(tk.INSERT, "Port\tStatus\n", 'black')
 
-        for i in open_tcp_ports:
-            text_area.insert(tk.INSERT, f"{i}\n", 'black')
+        for port in open_tcp_ports:
+            text_area.insert(tk.INSERT, f"{port}\tOpen\n", 'g')
+
+        text_area.insert(tk.INSERT, "==[ Open UDP Ports ]==\n", 'black')
+        text_area.insert(tk.INSERT, "Port\tService\n", 'black')
+
+        idx = 0
+        for port in open_udp_ports:
+            text_area.insert(
+                tk.INSERT, f"{open_udp_ports[idx]}\t{udp_services[idx]}\n", 'g')
+            idx += 1
+
         text_area.configure(state='disabled')
         scan_button.configure(state=tkinter.NORMAL)
     else:
@@ -125,43 +143,12 @@ number_of_ports_input = customtkinter.CTkEntry(
     root, text_color="white")
 number_of_ports_input.insert(0, '# of Ports')
 number_of_ports_input.place(x=250, y=13)
-labelTab = Label(root, bg="white", text="3een7ors Output")
+labelTab = Label(root, bg="white", text="3een 7ors Output")
 labelTab.place(x=111, y=75)
 
 scan_button = customtkinter.CTkButton(
     root, text="Scan Port", command=run_diff_thread, text_color="white")
 scan_button.place(x=385, y=13)
-
-#vul_text_area = Text(root)
-#vul_text_area.place(x=20, y=60)
-# listbox = Listbox(root)
-#
-# listbox.insert(1,"Bread")
-# listbox.insert(2, "Milk")
-# listbox.insert(3, "Meat")
-# listbox.insert(4, "Cheese")
-# listbox.insert(5, "Vegetables")
-#
-# listbox.place(x=20, y=60)
-#listbox.size(x=50, y=80)
-
-#T = Text(root, height = 5, width = 52)
-
-# Create label
-
-#l.config(font =("Courier", 14))
-
-# Fact = """A man can be arrested """
-# #l.size(x=50, y=80)
-# l.pack()
-
-
-# tk.Label(root,
-# text = "ScrolledText Widget Example",
-#          font = ("Times New Roman", 15),
-#          background = 'green',
-#          foreground = "white").grid(column = 0,
-#                                     row = 0)
 
 
 root['bg'] = main_color
