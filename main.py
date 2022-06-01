@@ -3,6 +3,7 @@ from cProfile import label
 from tkinter import *
 from tkinter import font
 import tkinter
+from tkinter import messagebox
 from turtle import bgcolor, color
 from PortScanner import PortScanner as pscanner
 from VulnerabilityScanner import VulnerabilityScanner as vscanner
@@ -90,8 +91,6 @@ def scan_victim_vul(victim, number_of_ports):
 def scan_victim():
     victim = target_input.get()
     number_of_ports = number_of_ports_input.get()
-    # Check bta3 sayed w marawan
-    # if number of ports in range 1 to 1 << 16
     global text_area
     print("I will scan")
     scan_button.configure(state=tkinter.DISABLED)
@@ -101,7 +100,6 @@ def scan_victim():
             tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
         text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
         idx = 0
-        # Handel if list is empty
         for port in open_tcp_vul_banners:
             text_area.insert(
                 tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
@@ -122,8 +120,48 @@ def scan_victim():
 
         text_area.configure(state='disabled')
         scan_button.configure(state=tkinter.NORMAL)
+    if(int(number_of_ports) > int(number_of_ports) << 16 or int(number_of_ports) <= 1):
+        print("a")
+        messagebox.showerror("Error", "Enter a valid port number")
     else:
-        assert "Check Victim IP of Number of Ports"
+        global text_area
+        
+        print("I will scan")
+        scan_button.configure(state=tkinter.DISABLED)
+        if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
+            text_area.insert(
+                tk.INSERT, "==[ Open Vulnerability Ports ]==\n", 'black')
+            text_area.insert(tk.INSERT, "Port\tBanner\n", 'black')
+            idx = 0
+            if(len(open_tcp_vul_ports) == 0):
+                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
+            for port in open_tcp_vul_banners:
+                text_area.insert(
+                    tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
+            text_area.insert(tk.INSERT, "==[ Open TCP Ports ]==\n", 'black')
+            text_area.insert(tk.INSERT, "Port\tStatus\n", 'black')
+            if(len(open_tcp_ports) == 0):
+                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
+
+
+            for port in open_tcp_ports:
+                text_area.insert(tk.INSERT, f"{port}\tOpen\n", 'g')
+
+            text_area.insert(tk.INSERT, "==[ Open UDP Ports ]==\n", 'black')
+            text_area.insert(tk.INSERT, "Port\tService\n", 'black')
+
+            idx = 0
+            if(len(open_udp_ports) == 0):
+                text_area.insert(tk.INSERT, "There is nothing opened\n",'g')
+            for port in open_udp_ports:
+                text_area.insert(
+                    tk.INSERT, f"{open_udp_ports[idx]}\t{udp_services[idx]}\n", 'g')
+                idx += 1
+
+            text_area.configure(state='disabled')
+            scan_button.configure(state=tkinter.NORMAL)
+        else:
+            assert "Check Victim IP of Number of Ports"
 
 
 def run_diff_thread():
@@ -135,13 +173,12 @@ target_label = customtkinter.CTkLabel(
     root, text="Target", fg="yellow",  text_font=("", 15))
 target_label.place(x=10, y=13)
 
-# TODO: You Must Make Sure that user enter valid IP Address
+
 target_input = customtkinter.CTkEntry(
     root, text_color="white")
 target_input.insert(0, '192.168.1.1')
 target_input.place(x=120, y=13)
 
-# TODO: You Must Check that user enter ports number in range between 1 to 2^16
 number_of_ports_input = customtkinter.CTkEntry(
     root, text_color="white")
 number_of_ports_input.insert(0, '# of Ports')
