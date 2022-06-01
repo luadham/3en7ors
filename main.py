@@ -162,7 +162,9 @@ def display_vul_ports():
     if(len(open_tcp_vul_ports) == 0):
         text_area.insert(tk.INSERT, "There is nothing opened\n", 'g')
     else:
-        for port in open_tcp_vul_banners:
+        for port in open_tcp_vul_ports:
+            if port == 80:
+                continue
             text_area.insert(
                 tk.INSERT, f"{open_tcp_vul_ports[idx]}\t{open_tcp_vul_banners[idx]}\n", 'x')
 
