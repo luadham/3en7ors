@@ -5,23 +5,18 @@ from threading import Semaphore, Thread
 # Port Scanning class 
 class PortScanner:
 
-    # this list will contain the open tcp ports for victim 
-    _open_tcp_ports = []
-    _banners = []
-    f = 0
-
-    # this list will contain the open udp ports for victim
-    __open_udp_ports = []
-    __udp_service = []
     __ping_MESSAGE = 'ping'
-
-    # We will use semaphore to make sure that only one Thread can append to our List
-    _tcp_semaphore = Semaphore(1) 
-    _udp_semaphore = Semaphore(1)
 
     def __init__(self, victim, number_of_ports):
         self.victim = victim
         self.number_of_ports = int(number_of_ports)
+        self._open_tcp_ports = []
+        self._banners = []
+        self.__open_udp_ports = []
+        self.__udp_service = []
+        self._tcp_semaphore = Semaphore(1) 
+        self._udp_semaphore = Semaphore(1)
+
 
 
     # We will Classify The open Ports to 3 Category
@@ -39,19 +34,21 @@ class PortScanner:
         try:
             sock.connect((self.victim, port))
             self._tcp_semaphore.acquire() # This is block any thread to modify the list like sem_wait()
+            #print(f"[+] {port} Open")
             self._open_tcp_ports.append(port) # if code reach to this line it means that the port is open
+            #print("Adham")
             self._tcp_semaphore.release() # This release the resource
             try:
                 # Try To Get Banner if exist
-                print(f"Try to get banner from port {port}")
+                sock.settimeout(20)
                 banner = sock.recv(1024) 
                 # if There is a panner store it 
-                self._tcp_semaphore.acquire()
-                print(f"There is a banner in Port {port}")                
+                self._tcp_semaphore.acquire()       
+                #print(banner)        
                 self._banners.append(banner.decode().strip('\n').strip('\r')) 
+                #print("Adel")
                 self._tcp_semaphore.release()
             except:
-                pass
                 # If code reach to this line it means that there is not banner for this open port
                 # so we will add dummy data
                 self._tcp_semaphore.acquire()
@@ -68,10 +65,6 @@ class PortScanner:
     # @return True if All ports scanned Successfully
     def scan(self, method="TCP"):
         _method = self.__scan_tcp_port
-        self._open_tcp_ports = []
-        self.__open_udp_ports = []
-        self.get_tcp_banners = []
-        self.__udp_service = []
         if (method.upper() == "UDP"):
             _method = self.__scan_udp_port
         else:
@@ -79,19 +72,16 @@ class PortScanner:
             assert "Method Must be TCP OR UDP"
     
         _threads = []
-        cnt = 0
         try :
             
             for i in range(1, self.number_of_ports + 1):
                 _threads.append(Thread(target=_method, args=(i,)))
-                cnt += 1
 
             for thread in _threads:
                 thread.start()
 
             for thread in _threads:
                 thread.join()
-            
             return True
         except:
             return False
@@ -125,9 +115,10 @@ class PortScanner:
                 self._tcp_semaphore.acquire()
                 self.__open_udp_ports.append(port)
                 self.__udp_service.append(serv)
+                self._tcp_semaphore.release()
             except:
                 pass
-            self._tcp_semaphore.release()
+            
         
 
     # @return open udp ports
