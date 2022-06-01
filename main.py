@@ -5,7 +5,7 @@ from PortScanner import PortScanner as pscanner
 from VulnerabilityScanner import VulnerabilityScanner as vscanner
 import tkinter as tk
 import tkinter.scrolledtext as st
-#import customtkinter
+import customtkinter
 import threading
 import time
 
