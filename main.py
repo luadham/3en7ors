@@ -5,7 +5,7 @@ from PortScanner import PortScanner as pscanner
 from VulnerabilityScanner import VulnerabilityScanner as vscanner
 import tkinter as tk
 import tkinter.scrolledtext as st
-import customtkinter
+#import customtkinter
 import threading
 import time
 
@@ -94,20 +94,39 @@ def scan_victim2():
     victim = target_input.get()
     number_of_ports = number_of_ports_input.get()
     if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
-        print("==[ Open TCP Ports ]==")
+        if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports
+                              ) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
+            text_area.insert(tk.INSERT,
+                             """\
+                             ==[ Open TCP Ports ]==                 
+                             """,'y')
+        ##print("==[ Open TCP Ports ]==")
+        ########
+
         for i in open_tcp_ports:
             print(i)
-        print("==[ Open UDP Ports ]==")
+        text_area.insert(tk.INSERT,
+                         """\
+                         [ Open UDP Ports ]                 
+                         """,'y')
+        ##print("==[ Open UDP Ports ]==")
         cnt = 0
         for i in open_udp_ports:
-            print(f'{i} -> {udp_services[cnt]}')
+            text_area.insert(tk.INSERT,
+                             f'{i} -> {udp_services[cnt]}'
+                             ,'y')
+            ##print(f'{i} -> {udp_services[cnt]}')
             cnt += 1
 
         print("==[ Vul Ports ]==")
         cnt = 0
         for i in open_tcp_vul_ports:
-            print(f"{i} -> {open_tcp_vul_banners[cnt]}")
+            text_area.insert(tk.INSERT,
+                             f'{i} -> {open_tcp_vul_banners[cnt]}'
+                             ,'y')
+            ##print(f"{i} -> {open_tcp_vul_banners[cnt]}")
             cnt += 1
+            ###################
 
     else:
         assert "Check Victim IP of Number of Ports"
