@@ -2,6 +2,7 @@ from _tkinter import *
 from cProfile import label
 from tkinter import *
 from tkinter import font
+import tkinter
 from turtle import bgcolor, color
 from PortScanner import PortScanner as pscanner
 from VulnerabilityScanner import VulnerabilityScanner as vscanner
@@ -93,12 +94,13 @@ def scan_victim():
     number_of_ports = number_of_ports_input.get()
     global text_area
     print("I will scan")
-    #scan_button['state'] = 'disabled'
+    scan_button.configure(state=tkinter.DISABLED)
     if (scan_victim_ports(victim=victim, number_of_ports=number_of_ports) and scan_victim_vul(victim=victim, number_of_ports=number_of_ports)):
 
         for i in open_tcp_ports:
             text_area.insert(tk.INSERT, f"{i}\n", 'black')
         text_area.configure(state='disabled')
+        scan_button.configure(state=tkinter.NORMAL)
     else:
         assert "Check Victim IP of Number of Ports"
 
@@ -109,24 +111,26 @@ def run_diff_thread():
 
 
 target_label = customtkinter.CTkLabel(
-    root, text="Target", bg=main_color, fg="white")
+    root, text="Target", fg="yellow",  text_font=("", 15))
 target_label.place(x=10, y=13)
 
 # TODO: You Must Make Sure that user enter valid IP Address
-target_input = customtkinter.CTkEntry(root)
+target_input = customtkinter.CTkEntry(
+    root, text_color="white")
 target_input.insert(0, '192.168.1.1')
 target_input.place(x=120, y=13)
 
 # TODO: You Must Check that user enter ports number in range between 1 to 2^16
-number_of_ports_input = customtkinter.CTkEntry(root)
+number_of_ports_input = customtkinter.CTkEntry(
+    root, text_color="white")
 number_of_ports_input.insert(0, '# of Ports')
 number_of_ports_input.place(x=250, y=13)
-labelTab = Label(root, bg="white", text="3een7oros Output")
+labelTab = Label(root, bg="white", text="3een7ors Output")
 labelTab.place(x=111, y=75)
 
 scan_button = customtkinter.CTkButton(
-    root, text="Scan Port", command=run_diff_thread)
-scan_button.place(x=400, y=10)
+    root, text="Scan Port", command=run_diff_thread, text_color="white")
+scan_button.place(x=385, y=13)
 
 #vul_text_area = Text(root)
 #vul_text_area.place(x=20, y=60)
